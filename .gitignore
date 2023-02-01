@@ -1,0 +1,9 @@
+# Configuration files
+/inventory
+/production
+
+# Playbook
+/playbook.yml
+
+# Vault pass file
+/.vault_pass

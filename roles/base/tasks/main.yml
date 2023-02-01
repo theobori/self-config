@@ -1,0 +1,35 @@
+- name: Install curl
+  ansible.builtin.package:
+    name: curl
+    state: present
+
+- name: Install wget
+  ansible.builtin.package:
+    name: wget
+    state: present
+
+- name: Install xz
+  package:
+    name: "{{ xz }}"
+    state: present
+
+- name: Download and run the Nix install script
+  ansible.builtin.shell: |
+    wget https://nixos.org/nix/install -O /tmp/install
+    echo "y" | bash /tmp/install --daemon
+  ignore_errors: yes
+
+- name: Add Nix profile to shell configuration
+  ansible.builtin.lineinfile:
+    dest: $HOME/.bashrc
+    line: "source $HOME/.nix-profile/etc/profile.d/nix.sh"
+
+- name: Add a cross user environment variable
+  ansible.builtin.shell: echo "PATH=$PATH:$HOME/.nix-profile/bin" > /etc/environment
+  become: yes
+
+- name: Reset connection to refresh the environment variables
+  meta: reset_connection
+
+- name: Install git
+  ansible.builtin.shell: nix-env -iA nixpkgs.git

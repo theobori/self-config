@@ -1,0 +1,25 @@
+- name: Install tmux
+  ansible.builtin.shell: nix-env -iA nixpkgs.tmux
+
+- name: Check if the tmux directory exists
+  ansible.builtin.stat:
+    path: $HOME/.tmux/plugins
+  register: tmux_dir
+
+- name: "Ansible Create directory if not exists"
+  ansible.builtin.file:
+    path: $HOME/.tmux/plugins
+    state: directory
+    mode: 0755
+    recurse: yes
+  when: tmux_dir.stat.exists == false
+
+- name: Cloning the Tmux Plugin Manager repository
+  ansible.builtin.git:
+    repo: https://github.com/tmux-plugins/tpm
+    dest: $HOME/.tmux/plugins/tpm
+
+- name: Copy the tmux configuration file
+  ansible.builtin.copy:
+    src: .tmux.conf
+    dest: $HOME

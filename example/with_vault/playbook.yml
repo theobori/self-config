@@ -1,0 +1,6 @@
+---
+- hosts: all
+  roles:
+    - role: base
+      xz: xz-utils
+    - minimal

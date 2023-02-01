@@ -1,0 +1,21 @@
+- name: Install fish
+  ansible.builtin.shell: nix-env -iA nixpkgs.fish
+
+- name: Check if the fish directory (at home) exists
+  ansible.builtin.stat:
+    path: $HOME/.config
+  register: fish_home_dir
+
+- name: "Ansible Create directory if not exists"
+  ansible.builtin.file:
+    path: $HOME/.config/fish
+    state: directory
+    mode: 0755
+    recurse: yes
+  when: fish_home_dir.stat.exists == false
+
+- name: Copy the fish configuration directory
+  ansible.builtin.copy:
+    src: fish
+    dest: $HOME/.config
+    force: yes
