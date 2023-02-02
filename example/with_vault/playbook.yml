@@ -3,4 +3,5 @@
   roles:
     - role: base
       xz: xz-utils
+      pkgconfig: pkg-config
     - minimal

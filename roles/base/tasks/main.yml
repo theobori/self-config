@@ -31,5 +31,30 @@
 - name: Reset connection to refresh the environment variables
   meta: reset_connection
 
+- name: Check if the nix configuration directory exists
+  ansible.builtin.stat:
+    path: $HOME/.config/nix
+  register: nix_dir
+
+- name: Create nix configuration directory
+  ansible.builtin.file:
+    path: $HOME/.config/nix
+    state: directory
+    mode: 0755
+    recurse: yes
+  when: nix_dir.stat.exists == false
+
+- name: Add Nix configuration file
+  ansible.builtin.lineinfile:
+    dest: $HOME/.config/nix/nix.conf
+    line: experimental-features = nix-command flakes
+    create: yes
+
 - name: Install git
   ansible.builtin.shell: nix-env -iA nixpkgs.git
+
+- name: Install gcc
+  ansible.builtin.shell: nix-env -iA nixpkgs.gcc
+
+- name: Install make
+  ansible.builtin.shell: nix-env -iA nixpkgs.gnumake

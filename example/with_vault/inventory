@@ -1,2 +1,2 @@
-[localhost]
+[me]
 localhost ansible_port=2022 ansible_ssh_user=root ansible_ssh_pass="{{ user_pass }}" ansible_become_pass="{{ become_pass }}"
