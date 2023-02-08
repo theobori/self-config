@@ -1,0 +1,21 @@
+- name: Install wezterm
+  ansible.builtin.shell: nix-env -iA nixpkgs.wezterm
+
+- name: Check if the wezterm directory (at home) exists
+  ansible.builtin.stat:
+    path: $HOME/.config/wezterm
+  register: wezterm_config_dir
+
+- name: Ansible Create directory if not exists
+  ansible.builtin.file:
+    path: $HOME/.config/wezterm
+    state: directory
+    mode: 0755
+    recurse: yes
+  when: wezterm_config_dir.stat.exists == false
+
+- name: Copy the wezterm configuration directory
+  ansible.builtin.copy:
+    src: wezterm
+    dest: $HOME/.config
+    force: yes

@@ -4,3 +4,4 @@
     - role: base
       xz: xz-utils
     - minimal
+    - fullenv
