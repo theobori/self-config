@@ -1,16 +1,11 @@
 if status is-interactive
+    # Commands to run in interactive sessions can go here
 end
 
-# Aliases
 alias la="exa -lah"
-alias tmux="tmux -2"
 
-# Environment
 export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$PATH:/nix/var/nix/profiles/default/bin"
+export PATH="$PATH:/$HOME/.nix-profile/bin"
 
-# Functions
-
-# Bash feature
-function !!
-    eval $history[1]
-end
+set -g theme_color_scheme dracula

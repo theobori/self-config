@@ -6,16 +6,32 @@
 
 - name: Check if the fish directory (at home) exists
   ansible.builtin.stat:
-    path: $HOME/.config
+    path: $HOME/.config/fish
   register: fish_home_dir
 
-- name: "Ansible Create directory if not exists"
+- name: Ansible Create directory if not exists
   ansible.builtin.file:
     path: $HOME/.config/fish
     state: directory
     mode: 0755
     recurse: yes
   when: fish_home_dir.stat.exists == false
+
+- name: Download oh-my-fish install script
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install
+    dest: /tmp/install
+
+- name: Install oh-my-fish
+  ansible.builtin.shell: fish /tmp/install --yes --noninteractive
+
+- name: Install oh-my-fish plugins
+  ansible.builtin.shell: fish -c "omf install {{ item }}"
+  loop:
+    - bobthefish
+    - peco
+    - bang-bang
+    - fish_logo
 
 - name: Copy the fish configuration directory
   ansible.builtin.copy:
