@@ -15,6 +15,7 @@
 - **`minimal`**: Setup a minimal environment (shell and others tools) + configure it
    - **vars**:
      - **`xz`**: The package name that install the `xz` binary
+ - **`fullenv`**: Stuff considered as extra like terminal, de/wm, etc..
 
 ## Test
 
