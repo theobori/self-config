@@ -17,7 +17,7 @@ command=xtitle
 interval=1
 
 [papesan_status]
-command=is_live.sh -c Papesan -d 🐐Papesan
+command=sc-is_live -c Papesan -d 🐐Papesan
 interval=300
 border=#ff79c6
 border_top=0
@@ -53,7 +53,7 @@ border_bottom=1
 border_left=0
 
 [containers]
-command=docker_infos.sh
+command=sc-docker_infos
 interval=3
 border=#8be9fd
 border_top=0
