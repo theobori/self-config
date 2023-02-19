@@ -1,21 +1,27 @@
-- name: Install fish
-  ansible.builtin.shell: nix-env -iA nixpkgs.fish
+- name: Install fish package + others
+  ansible.builtin.shell: nix-env -iA nixpkgs.{{ item }}
+  loop:
+    - fish
+    - exa
 
-- name: Install exa
-  ansible.builtin.shell: nix-env -iA nixpkgs.exa
-
-- name: Check if the fish directory (at home) exists
+- name: Check if the fish configuration directory exists
   ansible.builtin.stat:
     path: $HOME/.config/fish
   register: fish_home_dir
 
-- name: Ansible Create directory if not exists
+- name: Ansible create directory the fish configuration directory if not exists
   ansible.builtin.file:
     path: $HOME/.config/fish
     state: directory
     mode: 0755
     recurse: yes
   when: fish_home_dir.stat.exists == false
+
+- name: Copy the fish configuration directory
+  ansible.builtin.copy:
+    src: fish
+    dest: $HOME/.config
+    force: yes
 
 - name: Download oh-my-fish install script
   ansible.builtin.get_url:
@@ -33,8 +39,8 @@
     - bang-bang
     - fish_logo
 
-- name: Copy the fish configuration directory
-  ansible.builtin.copy:
-    src: fish
-    dest: $HOME/.config
-    force: yes
+# The shell path is hardcoded because `$(which fish)` cannot locate fish for some reasons
+- name: Set fish as the default shell
+  ansible.builtin.shell: |
+    usermod --shell $(which fish) {{ ansible_user }}
+  become: yes

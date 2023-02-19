@@ -1,0 +1,54 @@
+- name: Install Rust
+  ansible.builtin.shell: |
+    curl https://sh.rustup.rs -sSf | sh -s -- -y
+
+# Installing manually because the nix installation could have some errors
+- name: Download wezterm tarball
+  ansible.builtin.shell: |
+    curl -LO https://github.com/wez/wezterm/releases/download/20221119-145034-49b9839f/wezterm-20221119-145034-49b9839f-src.tar.gz
+    tar -xzf wezterm-20221119-145034-49b9839f-src.tar.gz
+
+# `ignore_errors` because for some weird reasons, it cannot detect Rust
+- name: Install wezterm dependencies
+  ansible.builtin.shell: |
+    ./get-deps
+  args:
+    chdir: wezterm-20221119-145034-49b9839f
+  become: yes
+  ignore_errors: yes
+
+- name: Build wezterm
+  ansible.builtin.shell: |
+    cargo build --release
+  args:
+    chdir: wezterm-20221119-145034-49b9839f
+
+- name: Move the binaries (wezterm, wezterm-gui)
+  ansible.builtin.shell: |
+    mv wezterm wezterm-gui /usr/bin
+  args:
+    chdir: wezterm-20221119-145034-49b9839f/target/release
+  become: yes
+
+- name: Check if the wezterm directory exists
+  ansible.builtin.stat:
+    path: $HOME/.config/wezterm
+  register: wezterm_config_dir
+
+- name: Ansible creates the wezterm directory if not exists
+  ansible.builtin.file:
+    path: $HOME/.config/wezterm
+    state: directory
+    mode: 0755
+    recurse: yes
+  when: wezterm_config_dir.stat.exists == false
+
+- name: Copy the wezterm configuration directory
+  ansible.builtin.copy:
+    src: wezterm
+    dest: $HOME/.config
+
+- name: Copy the configuration file as a template
+  ansible.builtin.template:
+    src: wezterm/wezterm.lua
+    dest: $HOME/.config/wezterm/

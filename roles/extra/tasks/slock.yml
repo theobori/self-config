@@ -1,0 +1,32 @@
+- name: Install libXrandr
+  ansible.builtin.package:
+    name: "{{ libxrandr }}"
+    state: present
+  become: yes
+
+- name: Create the "nogroup" group
+  group:
+    name: nogroup
+    state: present
+  become: yes
+
+- name: Clone the slock repository
+  ansible.builtin.git:
+    repo: https://git.suckless.org/slock
+    dest: slock
+
+- name: Copy the slock configuration (header) file
+  ansible.builtin.template:
+    src: slock/config.h
+    dest: slock/config.h
+
+- name: Compile slock
+  ansible.builtin.shell: make
+  args:
+    chdir: slock
+
+- name: Install slock
+  ansible.builtin.shell: make install
+  args:
+    chdir: slock
+  become: yes

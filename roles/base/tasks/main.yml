@@ -1,32 +1,50 @@
-- name: Install curl
+- name: Install base packages
   ansible.builtin.package:
-    name: curl
+    name: "{{ item }}"
     state: present
+  become: yes
+  loop:
+    - "{{ xz }}"
+    - gcc
+    - curl
 
-- name: Install wget
-  ansible.builtin.package:
-    name: wget
-    state: present
+- name: Check if nix is already installed
+  ansible.builtin.shell: |
+    which nix && which nix-env
+  ignore_errors: yes
+  register: has_nix
 
-- name: Install xz
-  package:
-    name: "{{ xz }}"
-    state: present
+- name: Check if the /nix exists
+  ansible.builtin.stat:
+    path: /nix
+  register: root_nix
+
+- name: Creating /nix if not exists (for the user)
+  ansible.builtin.file:
+    path: /nix
+    state: directory
+    mode: 0755
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  become: yes
+  when: root_nix.stat.exists == false
 
 - name: Download and run the Nix install script
   ansible.builtin.shell: |
-    wget https://nixos.org/nix/install -O /tmp/install
-    echo "y" | bash /tmp/install --daemon
-  ignore_errors: yes
+    curl -L https://nixos.org/nix/install | bash -s -- --daemon --yes
+  when: has_nix.rc == 1
 
 - name: Add Nix profile to shell configuration
   ansible.builtin.lineinfile:
     dest: $HOME/.bashrc
     line: "source $HOME/.nix-profile/etc/profile.d/nix.sh"
+  when: has_nix.rc == 1
 
 - name: Add a cross user environment variable
-  ansible.builtin.shell: echo "PATH=$PATH:$HOME/.nix-profile/bin" > /etc/environment
+  ansible.builtin.shell: |
+    echo "PATH=$PATH:$HOME/.nix-profile/bin:/home/{{ ansible_user }}/.nix-profile/bin" > /etc/environment
   become: yes
+  when: has_nix.rc == 1
 
 - name: Reset connection to refresh the environment variables
   meta: reset_connection
@@ -50,11 +68,10 @@
     line: experimental-features = nix-command flakes
     create: yes
 
-- name: Install git
-  ansible.builtin.shell: nix-env -iA nixpkgs.git
-
-- name: Install gcc
-  ansible.builtin.shell: nix-env -iA nixpkgs.gcc
-
-- name: Install make
-  ansible.builtin.shell: nix-env -iA nixpkgs.gnumake
+- name: Install base packages via nix
+  ansible.builtin.shell: nix-env -iA nixpkgs.{{ item }}
+  loop:
+    - git
+    - gnumake
+    - python310
+    - python310Packages.pip

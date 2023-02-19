@@ -8,7 +8,7 @@ return {
     hide_tab_bar_if_only_one_tab = true,
     default_prog = { "tmux" },
     font = wezterm.font_with_fallback {
-        "Comic Code",
+        "{{ primary_font }}",
         "JetBrains Mono",
         "Noto Color Emoji"
     },

@@ -1,0 +1,107 @@
+# For the benefit of emacs users: -*- shell-script -*-
+#
+#  _ _____ _     _            _
+# (_)___ /| |__ | | ___   ___| | _____
+# | | |_ \| '_ \| |/ _ \ / __| |/ / __|
+# | |___) | |_) | | (_) | (__|   <\__ \
+# |_|____/|_.__/|_|\___/ \___|_|\_\___/
+
+align=center
+separator=false
+color=#f8f8f2
+separator_block_width=30
+markup=pango
+
+[focused window]
+command=xtitle
+interval=1
+
+[papesan_status]
+command=is_live.sh -c Papesan -d 🐐Papesan
+interval=300
+border=#ff79c6
+border_top=0
+border_right=0
+border_bottom=1
+border_left=0
+
+[internet]
+command=sb-internet
+interval=1
+border=#bd93f9
+border_top=0
+border_right=0
+border_bottom=1
+border_left=0
+
+[nettraf]
+command=sb-nettraf
+interval=1
+border=#ff79c6
+border_top=0
+border_right=0
+border_bottom=1
+border_left=0
+
+[battery]
+command=sb-battery
+interval=5
+border=#bd93f9
+border_top=0
+border_right=0
+border_bottom=1
+border_left=0
+
+[containers]
+command=docker_infos.sh
+interval=3
+border=#8be9fd
+border_top=0
+border_right=0
+border_bottom=1
+border_left=0
+
+[home]
+command=sb-disk /home
+interval=3
+border=#bd93f9
+border_top=0
+border_right=0
+border_bottom=1
+border_left=0
+
+[memory]
+command=sb-memory
+interval=1
+border=#ff79c6
+border_top=0
+border_right=0
+border_bottom=1
+border_left=0
+
+[weather]
+command=LOCATION="montpellier" sb-forecast
+interval=20
+border=#bd93f9
+border_top=0
+border_right=0
+border_bottom=1
+border_left=0
+
+[volume]
+command=sb-volume
+interval=1
+border=#ff79c6
+border_top=0
+border_right=0
+border_bottom=1
+border_left=0
+
+[date]
+command=sb-clock
+interval=1
+border=#bd93f9
+border_top=0
+border_right=0
+border_bottom=1
+border_left=0

@@ -1,0 +1,136 @@
+- name: Install i3 + others
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  become: yes
+  loop:
+    - "{{ i3 }}"
+    - rofi
+
+- name: Install i3 dependencies via nix
+  ansible.builtin.shell: nix-env -iA nixpkgs.{{ item }}
+  loop:
+    - i3blocks
+    - figlet
+    - xtitle
+    - feh
+    - flameshot
+    - pavucontrol
+    - xdotool
+    - wireplumber
+    - wtype
+
+- name: Install rofimoji
+  ansible.builtin.shell: pip3.10 install --user rofimoji
+
+- name: Check if the rofi directory exists
+  ansible.builtin.stat:
+    path: $HOME/.config/rofi
+  register: rofi_config_dir
+
+- name: Ansible creates the rofi directory if not exists
+  ansible.builtin.file:
+    path: $HOME/.config/rofi
+    state: directory
+    mode: 0755
+    recurse: yes
+  when: rofi_config_dir.stat.exists == false
+
+- name: Copy the rofi configuration file as a template
+  ansible.builtin.template:
+    src: rofi/config.rasi
+    dest: $HOME/.config/rofi
+
+- name: Copy the rofi dracula theme
+  ansible.builtin.copy:
+    src: rofi/dracula-one
+    dest: $HOME/.config/rofi
+    force: yes
+
+- name: Copy the i3blocks configuration directory
+  ansible.builtin.copy:
+    src: i3blocks
+    dest: $HOME/.config
+
+- name: Check if the i3 directory (at home) exists
+  ansible.builtin.stat:
+    path: $HOME/.config/i3
+  register: i3_config_dir
+
+- name: Ansible creates i3 directory if not exists
+  ansible.builtin.file:
+    path: $HOME/.config/i3
+    state: directory
+    mode: 0755
+    recurse: yes
+  when: i3_config_dir.stat.exists == false
+
+- name: Copy the configuration file as a template
+  ansible.builtin.template:
+    src: i3/config
+    dest: $HOME/.config/i3
+
+- name: Cloning the scripts-collection repository
+  ansible.builtin.git:
+    repo: https://github.com/theobori/scripts-collection.git
+    dest: scripts-collection
+
+- name: Install scripts-collection
+  ansible.builtin.shell: make install
+  args:
+    chdir: scripts-collection
+  become: yes
+
+- name: Cloning the Luke Smith rice repository
+  ansible.builtin.git:
+    repo: https://github.com/LukeSmithxyz/voidrice.git
+    dest: voidrice
+
+- name: Make the statusbar scripts executable
+  ansible.builtin.file:
+    path: voidrice/.local/bin/statusbar/
+    state: directory
+    recurse: yes
+    mode: +x
+
+- name: Move the statusbar scripts
+  ansible.builtin.shell: |
+    mv voidrice/.local/bin/statusbar/* /usr/bin/
+  become: yes
+
+- name: Check if the wallpapers directory exists
+  ansible.builtin.stat:
+    path: $HOME/wallpapers
+  register: wallpapers_dir
+
+- name: Ansible creates the wallpapers directory if not exists
+  ansible.builtin.file:
+    path: $HOME/wallpapers
+    state: directory
+    mode: 0755
+    recurse: yes
+  when: wallpapers_dir.stat.exists == false
+
+- name: Copy the wallpapers
+  ansible.builtin.copy:
+    src: wallpapers
+    dest: $HOME
+    force: yes
+
+- name: Check if the dunst directory exists
+  ansible.builtin.stat:
+    path: $HOME/.config/dunst
+  register: dunst_config_dir
+
+- name: Ansible creates the dunst directory if not exists
+  ansible.builtin.file:
+    path: $HOME/.config/dunst
+    state: directory
+    mode: 0755
+    recurse: yes
+  when: dunst_config_dir.stat.exists == false
+
+- name: Copy the dunst configuration directory
+  ansible.builtin.template:
+    src: dunst/dunstrc
+    dest: $HOME/.config/dunst

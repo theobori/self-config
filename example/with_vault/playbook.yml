@@ -4,4 +4,6 @@
     - role: base
       xz: xz-utils
     - minimal
-    - extra
+    - role: extra
+      i3: i3
+      libxrandr: libxrandr-dev
