@@ -38,6 +38,7 @@
     - peco
     - bang-bang
     - fish_logo
+    - foreign-env
 
 # The shell path is hardcoded because `$(which fish)` cannot locate fish for some reasons
 - name: Set fish as the default shell
