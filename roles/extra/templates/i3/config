@@ -250,5 +250,24 @@ bindsym $mod+x mode "Exit: [l]ogout, [r]eboot, [s]hutdown"
 # rofimoji copy 
 bindsym $mod+s exec --no-startup-id rofimoji -a copy
 
-# Screenshot
-bindsym $mod+BackSpace exec flameshot screen -n 0 -c
+# Screenshot mode
+mode "Screenshot: [c]opy, [f]ull, [s]creen" {
+
+  bindsym c exec flameshot screen -n 0 -c
+
+  bindsym f exec flameshot screen
+
+  bindsym s exec flameshot screen -n 0
+
+  bindsym Escape mode "default"
+
+  bindsym Return mode "default"
+
+}
+
+bindsym $mod+BackSpace mode "Screenshot: [c]opy, [f]ull, [s]creen"
+
+# Bindind power button to disable it
+
+bindsym XF86PowerDown exec --no-startup-id "notify-send -u critical -t 2000 'Pressed the power button'"
+bindsym XF86PowerOff exec --no-startup-id "notify-send -u critical -t 2000 'Pressed the power button'"
