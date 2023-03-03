@@ -68,10 +68,17 @@
     line: experimental-features = nix-command flakes
     create: yes
 
+- name: Copy the GnuPG configuration file
+  ansible.builtin.copy:
+    src: .gnupg
+    dest: $HOME/.gnupg
+    force: yes
+
 - name: Install base packages via nix
   ansible.builtin.shell: nix-env -iA nixpkgs.{{ item }}
   loop:
     - git
     - gnumake
+    - gnupg
     - python310
     - python310Packages.pip
