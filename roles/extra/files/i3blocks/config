@@ -17,13 +17,21 @@ command=xtitle
 interval=1
 
 [papesan_status]
-command=sc-is_live -c Papesan -d Pape
+command=sc-is_live -c Papesan -d Pape -n
 interval=300
 # border=#bd93f9
 # border_top=0
 # border_right=0
 # border_bottom=1
 # border_left=0
+
+[alba_status]
+command=sc-is_live -c bonjouralba -d Alba -n
+interval=420
+
+# [maximebiaggi_status]
+# command=sc-is_live -c maximebiaggi -d MB -n
+# interval=600
 
 [internet]
 command=sb-internet
