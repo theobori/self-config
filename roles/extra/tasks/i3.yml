@@ -38,8 +38,8 @@
 
 - name: Copy the rofi configuration file as a template
   ansible.builtin.template:
-    src: rofi/config.rasi
-    dest: $HOME/.config/rofi
+    src: rofi/config.rasi.j2
+    dest: $HOME/.config/rofi/config.rasi
 
 - name: Copy the rofi dracula theme
   ansible.builtin.copy:
@@ -67,8 +67,8 @@
 
 - name: Copy the configuration file as a template
   ansible.builtin.template:
-    src: i3/config
-    dest: $HOME/.config/i3
+    src: i3/config.j2
+    dest: $HOME/.config/i3/config
 
 - name: Cloning the scripts-collection repository
   ansible.builtin.git:
@@ -132,5 +132,5 @@
 
 - name: Copy the dunst configuration directory
   ansible.builtin.template:
-    src: dunst/dunstrc
-    dest: $HOME/.config/dunst
+    src: dunst/dunstrc.j2
+    dest: $HOME/.config/dunst/dunstrc

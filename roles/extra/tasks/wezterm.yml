@@ -50,5 +50,5 @@
 
 - name: Copy the configuration file as a template
   ansible.builtin.template:
-    src: wezterm/wezterm.lua
-    dest: $HOME/.config/wezterm/
+    src: wezterm/wezterm.lua.j2
+    dest: $HOME/.config/wezterm/wezterm.lua

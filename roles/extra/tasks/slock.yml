@@ -17,7 +17,7 @@
 
 - name: Copy the slock configuration (header) file
   ansible.builtin.template:
-    src: slock/config.h
+    src: slock/config.h.j2
     dest: slock/config.h
 
 - name: Compile slock
